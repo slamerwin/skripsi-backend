@@ -63,7 +63,10 @@ app.use(
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000", // untuk development lokal
+      "http://apsium.administrasisekolah.id", // ganti dengan domain cPanel kamu
+    ],
   })
 );
 app.use(express.json());
