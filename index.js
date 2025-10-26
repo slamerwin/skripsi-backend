@@ -56,7 +56,7 @@ app.use(
     store: store,
     cookie: {
       httpOnly: true,
-      secure: true, // karena Railway sudah pakai HTTPS
+      secure: "auto",
       sameSite: "none", // penting supaya cookie bisa dikirim lintas domain
       maxAge: 24 * 60 * 60 * 1000, // 1 hari
     },
@@ -68,7 +68,7 @@ app.use(
     credentials: true,
     origin: [
       "http://localhost:3000", // untuk development lokal
-      "https://apsium.administrasisekolah.id", // frontend di cPanel (HTTPS)
+      "http://apsium.administrasisekolah.id", // frontend di cPanel (HTTPS)
     ],
   })
 );
