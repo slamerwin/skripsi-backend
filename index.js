@@ -52,10 +52,13 @@ app.use(
   session({
     secret: process.env.SESS_SECRET || "fallback_secret_123",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: store,
     cookie: {
-      secure: "auto",
+      httpOnly: true,
+      secure: true, // karena Railway sudah pakai HTTPS
+      sameSite: "none", // penting supaya cookie bisa dikirim lintas domain
+      maxAge: 24 * 60 * 60 * 1000, // 1 hari
     },
   })
 );
@@ -65,10 +68,11 @@ app.use(
     credentials: true,
     origin: [
       "http://localhost:3000", // untuk development lokal
-      "http://apsium.administrasisekolah.id", // ganti dengan domain cPanel kamu
+      "https://apsium.administrasisekolah.id", // frontend di cPanel (HTTPS)
     ],
   })
 );
+
 app.use(express.json());
 app.use(UserRoute);
 app.use(DosenRoute);
