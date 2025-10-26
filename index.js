@@ -86,7 +86,7 @@ app.use(StaffRoute);
 app.use(LogRisetRoute);
 app.use(AuthRoute);
 
-// store.sync();
+store.sync();
 
 const PORT = process.env.PORT || 162; // fallback kalau lokal
 app.listen(PORT, () => {
