@@ -57,7 +57,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: "auto",
-      sameSite: "none", // penting supaya cookie bisa dikirim lintas domain
+      sameSite: "lax", // penting supaya cookie bisa dikirim lintas domain
       maxAge: 24 * 60 * 60 * 1000, // 1 hari
     },
   })
