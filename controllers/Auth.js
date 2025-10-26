@@ -23,6 +23,7 @@ export const Login = async (req, res) => {
 };
 
 export const Me = async (req, res) => {
+  console.log(req);
   if (!req.session.userId) {
     return res.status(401).json({ msg: "Mohon login ke akun Anda!" });
   }
