@@ -1,9 +1,12 @@
 import express from "express";
 import cors from "cors";
 import session from "express-session";
-import dotenv from "dotenv";
 import db from "./config/Database.js";
 import SequelizeStore from "connect-session-sequelize";
+
+// import dotenv from "dotenv"; ❌ tidak perlu di Railway
+// dotenv.config();
+
 import UserRoute from "./routes/UserRoute.js";
 import DosenRoute from "./routes/DosenRoute.js";
 import SeminarRoute from "./routes/SeminarRoute.js";
@@ -22,32 +25,16 @@ import KaprodiRoute from "./routes/KaprodiRoute.js";
 import StaffRoute from "./routes/StaffRoute.js";
 import LogRisetRoute from "./routes/LogRisetRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
-dotenv.config();
 
 const app = express();
 
+// ✅ Railway pakai proxy HTTPS, jadi ini WAJIB
+app.set("trust proxy", 1);
+
 const sessionStore = SequelizeStore(session.Store);
+const store = new sessionStore({ db });
 
-const store = new sessionStore({
-  db: db,
-});
-
-/*(async()=>{
-    await db.sync();
-})();*/
-
-// app.use(
-//   session({
-//     secret: process.env.SESS_SECRET,
-//     resave: false,
-//     saveUninitialized: true,
-//     store: store,
-//     cookie: {
-//       secure: "auto",
-//     },
-//   })
-// );
-
+// ✅ Session config
 app.use(
   session({
     secret: process.env.SESS_SECRET || "fallback_secret_123",
@@ -56,24 +43,28 @@ app.use(
     store: store,
     cookie: {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: "auto", // gunakan auto biar bisa di Railway
+      sameSite: "none", // penting untuk lintas domain (frontend di cPanel)
       maxAge: 24 * 60 * 60 * 1000, // 1 hari
     },
   })
 );
 
+// ✅ CORS config (sudah benar)
 app.use(
   cors({
     credentials: true,
     origin: [
-      "http://localhost:3000", // untuk development lokal
-      "https://apsium.administrasisekolah.id", // frontend di cPanel (HTTPS)
+      "http://localhost:3000", // development
+      "https://apsium.administrasisekolah.id", // production
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
 app.use(express.json());
+
+// ✅ Routes
 app.use(UserRoute);
 app.use(DosenRoute);
 app.use(SeminarRoute);
@@ -95,7 +86,7 @@ app.use(AuthRoute);
 
 store.sync();
 
-const PORT = process.env.PORT || 162; // fallback kalau lokal
+const PORT = process.env.PORT || 162;
 app.listen(PORT, () => {
-  console.log("Server up and running on port " + PORT);
+  console.log("✅ Server up and running on port " + PORT);
 });
